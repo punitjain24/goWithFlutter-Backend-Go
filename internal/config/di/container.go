@@ -36,7 +36,6 @@ func InitContainer(cfg *config.Config) *Container {
 	rHandelr := registerHandler.NewRegisterHandler(rDomain)
 
 	//login module
-
 	lPort := loginPort.NewLoginService(db)
 	lDomain := loginDomain.NewLoginService(lPort)
 	lHandelr := loginHandler.NewLoginHandler(lDomain, cfg)
