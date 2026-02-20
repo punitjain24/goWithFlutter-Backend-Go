@@ -1,6 +1,7 @@
 package login
 
 import (
+	"go-with-fiber/internal/config"
 	lDomain "go-with-fiber/internal/domain/login"
 	lPorts "go-with-fiber/internal/ports/login"
 	"go-with-fiber/internal/utility"
@@ -12,10 +13,11 @@ import (
 type LoginHandler struct {
 	loginService lDomain.LoginServiceInterface
 	validate     *validator.Validate
+	cfg          *config.Config
 }
 
-func NewLoginHandler(loginService lDomain.LoginServiceInterface) *LoginHandler {
-	return &LoginHandler{loginService: loginService, validate: validator.New()}
+func NewLoginHandler(loginService lDomain.LoginServiceInterface, cfg *config.Config) *LoginHandler {
+	return &LoginHandler{loginService: loginService, validate: validator.New(), cfg: cfg}
 }
 
 func (l *LoginHandler) Login(ctx *fiber.Ctx) error {
@@ -36,7 +38,7 @@ func (l *LoginHandler) Login(ctx *fiber.Ctx) error {
 		))
 	}
 
-	//calling service layer 
+	//calling service layer
 	data, err := l.loginService.Login(user)
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(utility.NewErrorResponse(
@@ -46,7 +48,7 @@ func (l *LoginHandler) Login(ctx *fiber.Ctx) error {
 	}
 
 	//creating jwt token for the authorization
-	token, err := utility.GenerateJWT(data.Id, data.Email)
+	token, err := utility.GenerateJWT(data.Id, data.Email, l.cfg.JWTSecret)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(utility.NewErrorResponse(
 			"failed to generate token",

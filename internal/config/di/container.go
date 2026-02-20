@@ -39,7 +39,7 @@ func InitContainer(cfg *config.Config) *Container {
 
 	lPort := loginPort.NewLoginService(db)
 	lDomain := loginDomain.NewLoginService(lPort)
-	lHandelr := loginHandler.NewLoginHandler(lDomain)
+	lHandelr := loginHandler.NewLoginHandler(lDomain, cfg)
 
 	return &Container{
 		RHandeler: rHandelr,

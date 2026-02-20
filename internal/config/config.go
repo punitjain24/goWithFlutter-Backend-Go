@@ -14,10 +14,10 @@ type Config struct {
 	DBName     string
 	DBPort     string
 	DBSSLMode  string
+	JWTSecret  string
 }
 
-func LoadConfig(config *config.Config
-) *Config {
+func LoadConfig() *Config {
 
 	err := godotenv.Load()
 	if err != nil {
@@ -30,6 +30,7 @@ func LoadConfig(config *config.Config
 		DBName:     os.Getenv("DB_NAME"),
 		DBPort:     os.Getenv("DB_PORT"),
 		DBSSLMode:  os.Getenv("DB_SSLMODE"),
+		JWTSecret:  os.Getenv("JWT_SECRET"),
 	}
 
 }
