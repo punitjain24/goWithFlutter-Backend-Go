@@ -38,6 +38,9 @@ func main() {
 	//login route
 	container.LHandler.LoginRoute(api)
 
+	//dashboard route
+	container.DHandler.DashboardRoutes(api)
+
 	go gracefullShutdown(app)
 	fmt.Println("Server started on :8080 ✅")
 	if err := app.Listen(":8080"); err != nil {

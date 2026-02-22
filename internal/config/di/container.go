@@ -3,8 +3,11 @@ package di
 import (
 	"go-with-fiber/internal/config"
 	dbConfig "go-with-fiber/internal/config/database"
+	dashboardDomain "go-with-fiber/internal/domain/dashboard"
 	registerDomain "go-with-fiber/internal/domain/register"
+	"go-with-fiber/internal/handler/dashboard"
 	registerHandler "go-with-fiber/internal/handler/register"
+	dashboardPort "go-with-fiber/internal/ports/dashboard"
 	registerPort "go-with-fiber/internal/ports/register"
 
 	loginDomain "go-with-fiber/internal/domain/login"
@@ -15,6 +18,7 @@ import (
 type Container struct {
 	RHandeler *registerHandler.RegisterHandler
 	LHandler  *loginHandler.LoginHandler
+	DHandler  *dashboard.DashboardHandler
 }
 
 func InitContainer(cfg *config.Config) *Container {
@@ -25,10 +29,8 @@ func InitContainer(cfg *config.Config) *Container {
 		panic("failed to initialise database❌")
 	}
 
-	//tables created
-	db.AutoMigrate(
-		&registerPort.User{},
-	)
+	//tables migration
+	dbConfig.TableMigration(db)
 
 	//registration module
 	rPort := registerPort.NewRegisterService(db)
@@ -40,8 +42,14 @@ func InitContainer(cfg *config.Config) *Container {
 	lDomain := loginDomain.NewLoginService(lPort)
 	lHandelr := loginHandler.NewLoginHandler(lDomain, cfg)
 
+	//dashboard module
+	dPort := dashboardPort.NewDashboardService(db)
+	dDomain := dashboardDomain.NewDashboardService(dPort)
+	dHandler := dashboard.NewDashboardHandler(dDomain, *cfg)
+
 	return &Container{
 		RHandeler: rHandelr,
 		LHandler:  lHandelr,
+		DHandler:  dHandler,
 	}
 }

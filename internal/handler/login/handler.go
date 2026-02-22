@@ -1,6 +1,7 @@
 package login
 
 import (
+	"fmt"
 	"go-with-fiber/internal/config"
 	lDomain "go-with-fiber/internal/domain/login"
 	lPorts "go-with-fiber/internal/ports/login"
@@ -46,7 +47,7 @@ func (l *LoginHandler) Login(ctx *fiber.Ctx) error {
 			err.Error(),
 		))
 	}
-
+	fmt.Println("mty jwt secret", l.cfg.JWTSecret)
 	//creating jwt token for the authorization
 	token, err := utility.GenerateJWT(data.Id, data.Email, l.cfg.JWTSecret)
 	if err != nil {
